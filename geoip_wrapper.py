@@ -30,6 +30,7 @@ except ImportError:
 
 from logging import debug, info, warning
 
+
 class GeoIPWrapper(object):
 
     def __init__(self, data_file):
@@ -52,7 +53,7 @@ class GeoIPWrapper(object):
         try:
             return self.__record_by_addr(addr)
         except SystemError:
-            return None                   
+            return None
 
     def __record_by_addr(self, addr):
         if self.__geoip_version == 2:
@@ -60,7 +61,7 @@ class GeoIPWrapper(object):
         elif self.__geoip_version == 1:
             return self.__record_by_addr_v1(addr)
         else:
-            return None                   
+            return None
 
     def __record_by_addr_v1(self, addr):
         gir = self.__gi.record_by_addr(addr)
@@ -75,11 +76,11 @@ class GeoIPWrapper(object):
             'longitude': gir['longitude'],
             'latitude': gir['latitude'],
         }
-    
+
     def __record_by_addr_v2(self, addr):
         try:
             gir = self.__gi.city(addr)
-            
+
             return {
                 'location': gir.country.iso_code,
                 'region': gir.subdivisions.most_specific.iso_code,

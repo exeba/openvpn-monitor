@@ -17,14 +17,14 @@
 
 import configparser
 from collections import OrderedDict
-from pprint import pformat
 import sys
-import string
 
 from logging import debug, info, warning
 
+
 def is_truthy(s):
     return s in ['True', 'true', 'Yes', 'yes', True]
+
 
 class ConfigLoader(object):
 

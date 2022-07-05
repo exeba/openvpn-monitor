@@ -22,16 +22,17 @@ import sys
 
 from logging import debug, info, warning
 
+
 class ManagementConnection(object):
 
-    def __init__(self, vpn_config, debug = False):
+    def __init__(self, vpn_config, debug=False):
         self.__vpn_config = vpn_config
         self.__debug = debug
         self.__timeout = 3
         self.__error = False
         self.__socket = False
         self.__vpn_config['socket_connected'] = False
-        
+
     def is_connected(self):
         return self.__socket
 
@@ -47,13 +48,13 @@ class ManagementConnection(object):
         except ssl.SSLError as e:
             self.__handle_connect_error(e, 'ssl error')
         except Exception as e:
-            self.__handle_connect_error(e,'unexpected error')
+            self.__handle_connect_error(e, 'unexpected error')
 
     def __handle_connect_error(self, error, msg):
         self.__error = '{0!s}'.format(error)
         self.__vpn_config['error'] = self.__error
         self.__close()
-        warning('{0!s}: {0!s}'.format(msg, error))
+        warning('{0!s}: {1!s}'.format(msg, error))
 
     def send_command(self, command):
         info('Sending command: {0!s}'.format(command))
@@ -110,7 +111,7 @@ class ManagementConnection(object):
 
     def __authenticate(self):
         if (self.__vpn_config.get('password')):
-            self.__wait_for_data(password = self.__vpn_config.get('password'))
+            self.__wait_for_data(password=self.__vpn_config.get('password'))
 
     def __connect(self):
         if self.__is_tls_socket():
@@ -118,7 +119,7 @@ class ManagementConnection(object):
         elif self.__is_tcp_socket():
             self.__connect_tcp()
         elif self.__is_unix_socket():
-            self.__connect_unix()    
+            self.__connect_unix()
         else:
             raise Exception('Unkwnown socket type')
 
@@ -151,10 +152,9 @@ class ManagementConnection(object):
         self.__socket = socket.create_connection((host, port), self.__timeout)
 
     def __is_unix_socket(self):
-        
         return bool(self.__vpn_config.get('socket'))
 
     def __connect_unix(self):
         info('UNIX socket connect')
         self.__socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        self.__socket.connect(self.__vpn_config['socket'])    
+        self.__socket.connect(self.__vpn_config['socket'])

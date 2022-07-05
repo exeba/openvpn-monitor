@@ -23,8 +23,6 @@ from __future__ import unicode_literals
 
 import argparse
 import os
-import socket
-import string
 import sys
 import jinja2
 import humanize
@@ -34,6 +32,7 @@ from pprint import pformat
 from logging import debug, info, warning
 from openvpn_mgmt_interface import OpenvpnMgmtInterface
 from config_loader import ConfigLoader, is_truthy
+
 
 def get_args():
     parser = argparse.ArgumentParser(
@@ -46,10 +45,11 @@ def get_args():
                         help='Path to config file openvpn-monitor.conf')
     return parser.parse_args()
 
+
 def build_template_environment():
     env = jinja2.Environment(
-        loader = jinja2.FileSystemLoader('./templates'),
-        autoescape = True
+        loader=jinja2.FileSystemLoader('./templates'),
+        autoescape=True
     )
 
     env.globals.update({
@@ -75,7 +75,10 @@ def build_template_context(cfg, monitor, debug=False):
         'datetime_format': cfg.settings.get('datetime_format')
     }
 
+
 env = build_template_environment()
+
+
 def view(template_name):
     def decorator(view_func):
         @functools.wraps(view_func)
@@ -129,7 +132,7 @@ def monitor_wsgi(config, debug=False):
 
         return build_template_context(cfg, monitor)
 
-    @app.route('/<filename:re:.*\.(jpg|png)>', method='GET')
+    @app.route('/<filename:re:.*\\.(jpg|png)>', method='GET')
     def get_images(filename):
         return static_file(filename, image_dir)
 
@@ -139,6 +142,7 @@ def monitor_wsgi(config, debug=False):
 def running_as_app():
     return __name__ != '__main__'
 
+
 def fix_working_directory():
     if __file__ != 'openvpn-monitor.py':
         os.chdir(os.path.dirname(__file__))
@@ -146,7 +150,7 @@ def fix_working_directory():
 
 
 if running_as_app():
-    from bottle import Bottle, response, request, static_file, functools
+    from bottle import Bottle, request, static_file, functools
     fix_working_directory()
     application = monitor_wsgi('./openvpn-monitor.conf')
 else:

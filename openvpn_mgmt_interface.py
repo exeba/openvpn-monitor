@@ -27,11 +27,13 @@ from logging import debug, info, warning
 from management_connection import ManagementConnection
 from geoip_wrapper import GeoIPWrapper
 
+
 def get_date(date_string, uts=False):
     if not uts:
         return datetime.strptime(date_string, "%a %b %d %H:%M:%S %Y")
     else:
         return datetime.fromtimestamp(float(date_string))
+
 
 class OpenvpnMgmtInterface(object):
 
@@ -196,7 +198,7 @@ class OpenvpnMgmtInterface(object):
                     location_data = gi.record_by_addr(str(session['remote_ip']))
                     if location_data is not None:
                         session.update(location_data)
-                    
+
                 local_ipv4 = parts.popleft()
                 if local_ipv4:
                     session['local_ip'] = ip_address(local_ipv4)
