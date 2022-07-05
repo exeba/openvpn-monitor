@@ -33,7 +33,6 @@ import string
 import sys
 import jinja2
 from datetime import datetime
-from humanize import naturalsize
 from pprint import pformat
 
 from logging import debug, info, warning
