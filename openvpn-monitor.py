@@ -50,11 +50,11 @@ def get_args():
                         help='Path to config file openvpn-monitor.conf')
     return parser.parse_args()
 
-
 def build_template_environment():
     env = jinja2.Environment(
         loader = jinja2.FileSystemLoader('./templates'),
-        extensions = ["jinja2_humanize_extension.HumanizeExtension"]
+        extensions = ["jinja2_humanize_extension.HumanizeExtension"],
+        autoescape = True
     )
 
     env.globals.update({
