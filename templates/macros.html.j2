@@ -1,3 +1,7 @@
+{% macro bytes_and_naturasize(bytes) -%}
+{{ bytes }} ({{ naturalsize(bytes, binary=True) }})
+{% endmacro %}
+
 {% macro client_session_headers() -%}
     <tr>
         <th>Tun-Tap-Read</th>
@@ -10,11 +14,11 @@
 
 {% macro client_session(session) %}
     <tr>
-        <td>{{ session.tuntap_read }} ({{ session.tuntap_read | humanize_naturalsize(binary=True) }})</td>
-        <td>{{ session.tuntap_write }} ({{ session.tuntap_write | humanize_naturalsize(binary=True) }})</td>
-        <td>{{ session.tcpudp_read }} ({{ session.tcpudp_read | humanize_naturalsize(binary=True) }})</td>
-        <td>{{ session.tcpudp_write }} ({{ session.tcpudp_write | humanize_naturalsize(binary=True) }})</td>
-        <td>{{ session.auth_read }} ({{ session.auth_read | humanize_naturalsize(binary=True) }})</td>
+        <td>{{ bytes_and_naturasize(session.tuntap_read) }}</td>
+        <td>{{ bytes_and_naturasize(session.tuntap_write) }}</td>
+        <td>{{ bytes_and_naturasize(session.tcpudp_read) }}</td>
+        <td>{{ bytes_and_naturasize(session.tcpudp_write) }}</td>
+        <td>{{ bytes_and_naturasize(session.auth_read) }}</td>
     </tr>
 {% endmacro %}
 
@@ -54,8 +58,8 @@
                 Unknown
             {% endif %}
         </td>
-        <td>{{ session.bytes_recv }} ({{ session.bytes_recv | humanize_naturalsize(binary=True) }})</td>
-        <td>{{ session.bytes_sent }} ({{ session.bytes_sent | humanize_naturalsize(binary=True) }})</td>
+        <td>{{ bytes_and_naturasize(session.bytes_recv) }}</td>
+        <td>{{ bytes_and_naturasize(session.bytes_sent) }}</td>
         <td>{{ session.connected_since.strftime(datetime_format) }}</td>
         <td>
             {% if session.get('last_seen') %}
@@ -64,7 +68,8 @@
                 Unknown
             {% endif %}
         </td>
-        <td>{{ ((now() - session.connected_since) | string) [:-7] }}</td>
+        {% set delta = now() - session.connected_since %}
+        <td title="{{ delta }}">{{ naturaldelta(delta) }}</td>
         {% if vpn.show_disconnect %}
             <td>
                 <form method="post">
@@ -153,8 +158,8 @@
                         <td>{{ vpn.state.connected }}</td>
                         <td>{% if vpn.state.success == 'SUCCESS' %}Yes{% else %}No{% endif %}</td>
                         <td>{{ vpn.stats.nclients }}</td>
-                        <td>{{ vpn.stats.bytesin }} ({{ vpn.stats.bytesin | humanize_naturalsize(binary=True) }})</td>
-                        <td>{{ vpn.stats.bytesout }} ({{ vpn.stats.bytesout | humanize_naturalsize(binary=True) }})</td>
+                        <td>{{ bytes_and_naturasize(vpn.stats.bytesin) }}</td>
+                        <td>{{ bytes_and_naturasize(vpn.stats.bytesout) }}</td>
                         <td>{{ vpn.state.up_since.strftime(datetime_format) }}</td>
                         <td>{{ vpn.state.local_ip }}</td>
                         {% if vpn.state.mode == 'Client' %}

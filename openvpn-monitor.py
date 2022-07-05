@@ -21,17 +21,13 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-try:
-    import ConfigParser as configparser
-except ImportError:
-    import configparser
-
 import argparse
 import os
 import socket
 import string
 import sys
 import jinja2
+import humanize
 from datetime import datetime
 from pprint import pformat
 
@@ -53,12 +49,13 @@ def get_args():
 def build_template_environment():
     env = jinja2.Environment(
         loader = jinja2.FileSystemLoader('./templates'),
-        extensions = ["jinja2_humanize_extension.HumanizeExtension"],
         autoescape = True
     )
 
     env.globals.update({
         'now': datetime.now,
+        'naturalsize': humanize.naturalsize,
+        'naturaldelta': humanize.naturaldelta
     })
 
     return env
