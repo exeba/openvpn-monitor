@@ -28,7 +28,7 @@ try:
 except ImportError:
     geoip2_available = False
 
-from logging import debug, info, warning
+from logging_utils import debug, info, warning
 
 
 class GeoIPWrapper(object):

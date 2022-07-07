@@ -29,7 +29,7 @@ import humanize
 from datetime import datetime
 from pprint import pformat
 
-from logging import debug, info, warning
+from logging_utils import debug, info, warning
 from openvpn_mgmt_interface import OpenvpnMgmtInterface
 from config_loader import ConfigLoader, is_truthy
 
@@ -117,6 +117,7 @@ def monitor_wsgi(config, debug=False):
     def get_slash():
         cfg = ConfigLoader(config)
         monitor = OpenvpnMgmtInterface(cfg, debug=debug)
+        monitor.gather_all_data_and_disconnect()
 
         return build_template_context(cfg, monitor)
 
@@ -124,11 +125,18 @@ def monitor_wsgi(config, debug=False):
     @view('openvpn-monitor.html.j2')
     def post_slash():
         cfg = ConfigLoader(config)
-        vpn_id = request.forms.get('vpn_id')
-        ip = request.forms.get('ip')
-        port = request.forms.get('port')
-        client_id = request.forms.get('client_id')
-        monitor = OpenvpnMgmtInterface(cfg, debug=debug, vpn_id=vpn_id, ip=ip, port=port, client_id=client_id)
+        monitor = OpenvpnMgmtInterface(cfg, debug=debug)
+
+        monitor.init_all_connections()
+        monitor.collect_metadata()
+        monitor.disconnect_client(
+            vpn_id=request.forms.get('vpn_id'),
+            client_ip=request.forms.get('ip'),
+            client_port=request.forms.get('port'),
+            client_id=request.forms.get('client_id')
+        )
+        monitor.collect_data()
+        monitor.close_all_connections()
 
         return build_template_context(cfg, monitor)
 

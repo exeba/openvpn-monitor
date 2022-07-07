@@ -20,7 +20,7 @@ import socket
 import ssl
 import sys
 
-from logging import debug, info, warning
+from logging_utils import debug, info, warning
 
 
 class ManagementConnection(object):

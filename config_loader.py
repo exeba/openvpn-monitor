@@ -19,7 +19,7 @@ import configparser
 from collections import OrderedDict
 import sys
 
-from logging import debug, info, warning
+from logging_utils import debug, info, warning
 
 
 def is_truthy(s):
@@ -55,6 +55,12 @@ class ConfigLoader(object):
                 self.parse_global_section(config)
             else:
                 self.parse_vpn_section(config, section)
+
+        self.set_vpn_ids()
+
+    def set_vpn_ids(self):
+        for vpn_id, vpn in list(self.vpns.items()):
+            vpn['id'] = vpn_id
 
     def load_default_settings(self):
         info('Using default settings => localhost:5555')
